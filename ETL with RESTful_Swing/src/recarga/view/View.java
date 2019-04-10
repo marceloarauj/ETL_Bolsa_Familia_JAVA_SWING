@@ -5,6 +5,7 @@
  */
 package recarga.view;
 
+import java.util.List;
 import java.util.Vector;
 import recarga.controller.Controller;
 import javax.swing.JOptionPane;
@@ -17,18 +18,15 @@ import recarga.model.Model;
  */
 public class View extends javax.swing.JFrame {
 
-    /**
-     * Creates new form View
-     */
+    List<Model[]> lista = null;
+            
     public View() {
         initComponents();
+        
         this.setLocationRelativeTo(null);
-        JOptionPane.showMessageDialog(this,"1- O botão CONFIRMAR exibe apenas os "
-                                             + "dados de acordo com o campo"
-                
-                + "\n2-O botão TODOS carrega todos os dados entre 2016 e 2018"
-                + "\n3-O botão CARREGAR adiciona todos os dados carregados pelo "
-                + "botão TODOS em banco PostgreSQL");
+        
+        tutorial();
+        carregar.setEnabled(false);
     }
 
     /**
@@ -55,6 +53,8 @@ public class View extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         todos = new javax.swing.JButton();
         carregar = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ETL - DADOS DO BOLSA FAMÍLIA");
@@ -89,8 +89,31 @@ public class View extends javax.swing.JFrame {
         jLabel4.setText("municipio(IBGE)");
 
         todos.setText("TODOS");
+        todos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                todosActionPerformed(evt);
+            }
+        });
 
         carregar.setText("CARREGAR");
+        carregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                carregarActionPerformed(evt);
+            }
+        });
+
+        jButton2.setForeground(new java.awt.Color(255, 0, 51));
+        jButton2.setText("?");
+        jButton2.setContentAreaFilled(false);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jProgressBar1.setForeground(new java.awt.Color(0, 0, 255));
+        jProgressBar1.setMaximum(200500);
+        jProgressBar1.setToolTipText("");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -100,49 +123,57 @@ public class View extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
-                                .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(35, 35, 35)
-                                .addComponent(jLabel3)))
-                        .addGap(67, 67, 67)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(municipio, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(59, 59, 59)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(mes, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(26, 26, 26)
-                                .addComponent(ano, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(51, 51, 51)
-                                .addComponent(jLabel2)
-                                .addGap(20, 20, 20)))
+                        .addGap(49, 49, 49)
+                        .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jLabel3)))
+                .addGap(67, 67, 67)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(municipio, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(59, 59, 59)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(mes, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(ano, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(51, 51, 51)
+                        .addComponent(jLabel2)
+                        .addGap(20, 20, 20)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(todos, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(carregar)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane1)))
+                        .addGap(0, 10, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addContainerGap())))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)))
+                    .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(estado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -155,8 +186,10 @@ public class View extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -190,10 +223,10 @@ public class View extends javax.swing.JFrame {
         }catch(Exception e){
             
             JOptionPane.showMessageDialog
-                (this, "Formato inválido (Somente Inteiros)",
+                (this, "Formato inválido ou não existente",
                         "Erro",JOptionPane.ERROR_MESSAGE);
             
-            System.out.println(e.getLocalizedMessage());
+            
             
         }
         
@@ -202,6 +235,25 @@ public class View extends javax.swing.JFrame {
         mes.setText("");
         municipio.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void todosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_todosActionPerformed
+        carregar.setEnabled(true);
+        todos.setEnabled(false);
+        jButton1.setEnabled(false);
+        
+        lista = Controller.todosOsDados();
+        
+        atualizarTabela(lista);
+        
+    }//GEN-LAST:event_todosActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       tutorial();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void carregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carregarActionPerformed
+        carregar.setEnabled(false);
+    }//GEN-LAST:event_carregarActionPerformed
     
     // atualizar uma tabela para somente um elemento
     public void atualizarTabela(Model[] modelo){
@@ -224,8 +276,37 @@ public class View extends javax.swing.JFrame {
         
         mod.addRow(v);
     }
+    public void atualizarTabela(List<Model[]> lista){
     
-    //public void atualizar tabela para todos os elementos
+        DefaultTableModel mod = (DefaultTableModel) jTable1.getModel();
+        
+        for(Model[] modelo: lista){
+           
+            Object[] obj = new Object[7];
+            
+            obj[0]=modelo[0].getMunicipio().getUf().getSigla();
+            obj[1]=modelo[0].getMunicipio().getUf().getNome();
+            obj[2]=modelo[0].getMunicipio().getNomeIBGE();
+            obj[3]=modelo[0].getQuantidadeBeneficiados();
+            obj[4]=modelo[0].getValor();
+            obj[5]=modelo[0].getDataReferencia();
+            obj[6]=modelo[0].getMunicipio().getPais();
+            
+            mod.addRow(obj);
+        }
+    }
+    
+    public void tutorial(){
+    
+        JOptionPane.showMessageDialog(this,"1- O botão CONFIRMAR exibe apenas os "
+                                             + "dados de acordo com o campo"
+                
+                + "\n2-O botão TODOS carrega todos os dados entre 2016 e 2018"
+                + "\n3-O botão CARREGAR adiciona todos os dados carregados pelo "
+                + "botão TODOS em banco PostgreSQL","TUTORIAL",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -264,11 +345,13 @@ public class View extends javax.swing.JFrame {
     private javax.swing.JButton carregar;
     private javax.swing.JTextField estado;
     private javax.swing.JButton jButton1;
+    public static javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    public static javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
