@@ -18,18 +18,23 @@ import recarga.dao.Query;
  */
 public class Extract {
     
-    List lista = new ArrayList();
+    private static ResultSet rs = null;
     
     private Extract(){}
     
     public static void extrair(OperacionalDao extrair) throws SQLException{
         
-        ResultSet rs = extrair.executarExtract(Query.EXTRACT);
+         rs = extrair.executarExtract(Query.EXTRACT);
         
-        while(rs.next()){
-            String nome = rs.getString("uf_nome");
-            System.out.println(nome);
-        }
+    }
+    
+    public static ResultSet resultadoExtracao(){
+        return rs;
+    }
+    
+    public static ResultSet dadosCidade(OperacionalDao extrair) throws SQLException{
+        ResultSet dadosCidade = extrair.obterDadosCidade();
         
+        return dadosCidade;
     }
 }

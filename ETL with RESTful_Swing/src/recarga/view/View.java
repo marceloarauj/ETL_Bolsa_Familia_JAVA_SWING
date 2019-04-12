@@ -5,8 +5,11 @@
  */
 package recarga.view;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import recarga.controller.Controller;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +58,7 @@ public class View extends javax.swing.JFrame {
         carregar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ETL - DADOS DO BOLSA FAMÍLIA");
@@ -115,6 +119,14 @@ public class View extends javax.swing.JFrame {
         jProgressBar1.setMaximum(200500);
         jProgressBar1.setToolTipText("");
 
+        jButton3.setFont(new java.awt.Font("Trebuchet MS", 0, 24)); // NOI18N
+        jButton3.setText("ETL");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -156,11 +168,18 @@ public class View extends javax.swing.JFrame {
                         .addComponent(jButton2)
                         .addContainerGap())))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jScrollPane1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(272, 272, 272)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,10 +205,12 @@ public class View extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton3)
+                .addGap(18, 18, 18))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -243,6 +264,10 @@ public class View extends javax.swing.JFrame {
         
         lista = Controller.todosOsDados();
         
+        while(Controller.retornaThread().isAlive()){
+        
+        }
+        Controller.fecharConexao();
         atualizarTabela(lista);
         
     }//GEN-LAST:event_todosActionPerformed
@@ -253,7 +278,18 @@ public class View extends javax.swing.JFrame {
 
     private void carregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_carregarActionPerformed
         carregar.setEnabled(false);
+      
     }//GEN-LAST:event_carregarActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+        try {
+            Controller.efetuarETL();
+        } catch (SQLException ex) {
+
+        }
+       
+    }//GEN-LAST:event_jButton3ActionPerformed
     
     // atualizar uma tabela para somente um elemento
     public void atualizarTabela(Model[] modelo){
@@ -346,6 +382,7 @@ public class View extends javax.swing.JFrame {
     private javax.swing.JTextField estado;
     private javax.swing.JButton jButton1;
     public static javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -1,5 +1,6 @@
 package recarga.dao;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -66,5 +67,18 @@ public class OperacionalDao {
             conexao.close();
         }catch(Exception e){}
         
+    }
+    
+    public ResultSet obterDadosCidade(){
+        
+        
+        ResultSet rs = null;
+        try {
+            rs = sts.executeQuery(Query.TRANSFORM);
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+       
+        return rs;
     }
 }

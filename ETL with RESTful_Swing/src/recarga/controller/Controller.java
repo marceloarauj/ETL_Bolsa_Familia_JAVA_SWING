@@ -23,6 +23,7 @@ import recarga.dao.OperacionalDao;
 import recarga.dao.Query;
 import recarga.dao.WarehouseDao;
 import recarga.extract.Extract;
+import recarga.load.Load;
 import recarga.model.Model;
 import recarga.view.View;
 
@@ -37,7 +38,7 @@ public class Controller {
     
     private static OperacionalDao bancoOperacional;
     private static WarehouseDao   dataWarehouse;
-   
+    private static Thread thread;
     
     // Método de teste , retorna somente 1 json
     public static Model[] obterDados
@@ -95,19 +96,24 @@ public class Controller {
         
         List<Model[]> lista = new ArrayList<Model[]>();
         //Thread separada
-        Thread th = new Thread(new Runnable(){
+         Thread th = new Thread(new Runnable(){
             @Override
             public void run() {
                 
                 int ano = 2016;
-                int mes = 0;
+                int mes = 2;
                 String estado = "";
                 String municipio = "";
-                
+                boolean chave = false;
                 //listar todos os itens de todos os anos 
                 while(ano < 2019){
                     
+                    if(!chave){
+                    mes = 2;
+                    chave = true;
+                    }else{
                     mes = 1;
+                    }
                     while(mes < 13){
                         
                         //abrir
@@ -126,12 +132,18 @@ public class Controller {
                         
                         try {
                             while((linha = brl.readLine())!= null){
-                
-                                String[] dados = linha.split(",");
+                                try{
+                                    String[] dados = linha.split(","); 
                                 
-                                estado = dados[1].replace("\"", "");
-                                municipio = dados[2].replace("\"", "");
+                                    estado = dados[1].replace("\"", "");
+                                    municipio = dados[2].replace("\"", "");
                                 
+                                }catch(Exception e){
+                                    mes = 0;
+                                    ano = 0;
+                                    estado = "00";
+                                    municipio = "00000";
+                                }
                                 StringBuilder str = new StringBuilder();
         
                                 str.append("http://www.transparencia.gov.br/"+
@@ -205,10 +217,8 @@ public class Controller {
         
         th.start();
         
-        while(th.isAlive()){
+        thread = th;
         
-        }
-        bancoOperacional.desconectar();
         return lista;
     }
     
@@ -226,13 +236,18 @@ public class Controller {
                              +"TO_DATE("+"'"+mod.getDataReferencia()+"'"+",'dd/mm/yyyy'"+")"+")");
     }
     
-    public static void extrair() throws SQLException{
-        
-        bancoOperacional = new OperacionalDao();
-        bancoOperacional.conectar();
-        
-        Extract.extrair(bancoOperacional);
-        
+    
+    public static Thread retornaThread(){
+        return thread;
+    }
+    
+    public static void fecharConexao(){
         bancoOperacional.desconectar();
     }
+    
+    public static void efetuarETL() throws SQLException{
+        Load load = new Load();
+        load.Carregar();
+    }
+    
 }
